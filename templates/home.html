@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NovaFlex Fitness - Home</title>
+    <link rel="stylesheet" href="../static/css/home.css">
+</head>
+
+<body>
+    <header>
+        <span id="menu-icon">&#9776;</span>
+        <img id="log" src="https://i.pinimg.com/originals/65/56/67/6556672b79c8cefe5e223471c0a1c7b4.jpg" alt="Avatar">
+        <h1 id="nf">NovaFlex Fitness</h1>
+        <ul class="menu">
+            <li><a href="{{ home_url }}">Home</a></li>
+            <li><a href="{{ virtual_workouts_url }}">Workouts</a></li>
+            <li><a href="https://www.instagram.com/akshat_281204?igsh=MTE5aDl6cjhuNnRiNw==">Contact</a></li>
+            <li><a href="{{ user_profile_url }}"><img id="profile" src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar" style="width:100px"></a></li>
+        </ul>
+    </header>
+
+    <div class="main-section">
+        <h1>Welcome to NovaFlex Fitness</h1>
+        <p>Transform your body and mind with our cutting-edge fitness programs. We are committed to helping you achieve your fitness goals and live a healthier lifestyle.</p>
+        <a href="{{ membership_url }}" class="cta-button">Get Started</a>
+
+        <div class="feature-box">
+            <div class="feature">
+                <h2><a href="{{ virtual_workouts_url }}">Virtual Workouts</a></h2>
+                <p>Experience high-intensity virtual workouts that will boost your muscle strength and burn calories.</p>
+            </div>
+            <div class="feature">
+                <h2><a href="https://www.healthifyme.com/blog/the-ultimate-7-day-gym-diet-plan/#google_vignette">Diet Plans</a></h2>
+                <p>Get Diet Plans for different body training practices.</p>
+            </div>
+            <div class="feature">
+                <h2><a href="https://youtu.be/dAqQqmaI9vY?feature=shared">Yoga & Meditation</a></h2>
+                <p>Balance your body and mind with our relaxing yoga and meditation sessions.</p>
+            </div>
+        </div>
+        <div class="feature-box">
+            <div class="feature">
+                <h2><a href="{{ gyms_near_you_url }}">Gyms Near You</a></h2>
+                <p>Find all the gyms near you reducing the work of going outside to find a good one.</p>
+            </div>
+            <div class="feature">
+                <h2><a href="https://cultsport.com/gym-equipment">Equipments</a></h2>
+                <p>All the required Equipments at one place.</p>
+            </div>
+            <div class="feature">
+                <h2><a href="https://cultsport.com/supplements">Supplements</a></h2>
+                <p>All the required Supplements at one place.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2024 NovaFlex Fitness. All Rights Reserved.
+    </footer>
+
+    <script>
+        document.getElementById("menu-icon").addEventListener("click", function() {
+            var menu = document.querySelector(".menu");
+            menu.classList.toggle("show");
+        });
+    </script>
+</body>
+
+</html>

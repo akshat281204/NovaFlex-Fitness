@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NovaFlex Fitness Membership</title>
+    <link rel="stylesheet" href="../static/css/membership.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('join_gold').addEventListener('click', function () {
+                purchaseMembership('gold');
+            });
+
+            document.getElementById('join_platinum').addEventListener('click', function () {
+                purchaseMembership('platinum');
+            });
+
+            function purchaseMembership(membershipType) {
+                //Send AJAX request to the server to update the membership
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/purchase_membership', true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status === 200) {
+                            window.location.href = '/home'; // Redirects to home page after successful purchase
+                        } else {
+                            console.error('Failed to purchase membership');
+                        }
+                    }
+                };
+                xhr.send(JSON.stringify({ membership_type: membershipType }));
+            }
+        });
+    </script>
+</head>
+
+<body>
+
+    <header>
+        <h1>NovaFlex Fitness</h1>
+        <nav>
+            <ul>
+                <li><a href="{{ home_url }}">Home</a></li>
+                <li><a href="{{ virtual_workouts_url }}">Virtual Workouts</a></li>
+                <li><a href="{{ membership_url }}">Membership</a></li>
+                <li><a href="https://youtu.be/dAqQqmaI9vY?feature=shared">Yoga</a></li>
+                <li><a href="https://www.instagram.com/akshat_281204?igsh=MTE5aDl6cjhuNnRiNw==">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="membership">
+        <h2>Membership Tiers</h2>
+        <div class="membership-tier">
+            <h3>Gold Membership</h3>
+            <p>Access to virtual classes, personalized workout plans, and exclusive content.</p>
+            <p>Price: 299 Rs/month</p>
+            {% if gold_membership == 'yes' %}
+                <p>Enrolled</p>
+            {% else %}
+                <button id="join_gold">Join Now</button>
+            {% endif %}
+        </div>
+
+        <div class="membership-tier">
+            <h3>Platinum Membership</h3>
+            <p>All features of Gold Membership, plus priority access to live sessions and nutrition guidance.</p>
+            <p>Price: 599 Rs/month</p>
+            {% if platinum_membership == 'yes' %}
+                <p>Enrolled</p>
+            {% else %}
+                <button id="join_platinum">Join Now</button>
+            {% endif %}
+        </div>
+    </section>
+
+    <footer>
+        &copy; 2024 NovaFlex Fitness. All Rights Reserved.
+    </footer>
+
+</body>
+
+</html>

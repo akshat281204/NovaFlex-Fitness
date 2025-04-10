@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NovaFlex Fitness</title>
+    <link rel="stylesheet" href="../static/css/su.css">
+</head>
+<body>
+    <div id="logo2">
+        <br><br><img src="../static/images/NovaFlex logo.png"><br><br><br><br>
+    </div>
+
+    <div id="forms-container">
+        <form id="signup-form" action="/signup" method="post">
+            <h2>Sign Up</h2>
+            <p style="color: red;">{{ error }}</p>
+            <label for="su_Username">Username :</label>
+            <input type="text" id="su_Username" name="su_Username" required>
+
+            <label for="su_Ph_no">Phone No. :</label>
+            <input type="tel" id="su_Ph_no" name="su_Ph_no" required>
+
+            <label for="su_Date_Of_Birth">Date Of Birth :</label>
+            <input type="date" id="su_Date_Of_Birth" name="su_Date_Of_Birth" required>
+
+            <label for="su_Email">Email :</label>
+            <input type="email" id="su_email" name="su_email" required>
+
+            <label for="su_Password">Password :</label>
+            <input type="password" id="su_password" name="su_password" required>
+            
+            <button type="submit">Sign Up</button>
+            <p>Already have an account? <a href="#" id="toggle-login">Login</a></p>
+        </form>
+
+        <form id="login-form" action="/login" method="post" style="display:none;">
+            <h2>Login</h2>
+            <label for="li_Username">Username :</label>
+            <input type="text" id="li_Username" name="li_Username" required>
+
+            <label for="li_Password">Password :</label>
+            <input type="password" id="li_password" name="li_password" required>
+            
+            <button type="submit">Login</button>
+            <p>Don't have an account? <a href="#" id="toggle-signup">Sign Up</a></p>
+        </form>
+    </div>
+
+    <footer>
+        &copy; 2024 NovaFlex Fitness. All Rights Reserved.
+    </footer>
+
+    <script>
+        document.getElementById('toggle-login').addEventListener('click', function() {
+            document.getElementById('signup-form').style.display = 'none';
+            document.getElementById('login-form').style.display = 'block';
+        });
+
+        document.getElementById('toggle-signup').addEventListener('click', function() {
+            document.getElementById('signup-form').style.display = 'block';
+            document.getElementById('login-form').style.display = 'none';
+        });
+    </script>
+</body>
+</html>
