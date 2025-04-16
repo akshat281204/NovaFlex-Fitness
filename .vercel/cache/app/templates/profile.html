@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile - NovaFlex</title>
+    <link rel="stylesheet" href="../static/css/profile.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f8f8f8;
+            color: #333;
+        }
+
+        h1 {
+            color: #222;
+            text-align: center;
+        }
+
+        ul {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 0;
+            list-style-type: none;
+        }
+
+        ul li {
+            background-color: #fff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        .logout-btn {
+            display: block;
+            width: fit-content;
+            margin: 30px auto;
+            padding: 10px 20px;
+            background-color: #d9534f;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        .logout-btn:hover {
+            background-color: #c9302c;
+        }
+    </style>
+</head>
+<body>
+    <h1>User Profile</h1>
+    <ul>
+        <li><strong>Username:</strong> {{ user_data.username }}</li>
+        <li><strong>Email:</strong> {{ user_data.email }}</li>
+        <li><strong>Phone:</strong> {{ user_data.phone }}</li>
+        <li><strong>Date of Birth:</strong> {{ user_data.dob }}</li>
+        <li><strong>Gold Membership:</strong> {{ user_data.gold }}</li>
+        <li><strong>Platinum Membership:</strong> {{ user_data.platinum }}</li>
+    </ul>
+    <a href="/logout" class="logout-btn">Logout</a>
+</body>
+</html>

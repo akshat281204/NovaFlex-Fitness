@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Gyms Near You</title>
+    <link rel="stylesheet" href="../static/css/gny.css">
+</head>
+<body>
+    <header>
+        <h1>NovaFlex Fitness</h1>
+        <nav>
+            <ul>
+                <li><a href="{{ home_url }}">Home</a></li>
+                <li><a href="{{ virtual_workouts_url }}" class="active">Virtual Workouts</a></li>
+                <li><a href="{{ gyms_near_you_url }}">Gyms Near You</a></li>
+                <li><a href="https://youtu.be/dAqQqmaI9vY?feature=shared">Yoga</a></li>
+                <li><a href="https://www.instagram.com/akshat_281204?igsh=MTE5aDl6cjhuNnRiNw==">About Us</a></li>
+                <li><a href="{{ user_profile_url }}">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="gym-body">
+        <h1>Find Gyms and Meditation Centres Near You</h1>
+        <div id="gyms-list"></div>
+    </div>
+<script>
+    function findGymsNearMe() {
+        const gymsList = document.getElementById("gyms-list");
+
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+
+                    // Using OpenStreetMap Overpass API to find gyms near the user's location
+                    const apiUrl = `https://overpass-api.de/api/interpreter?data=[out:json];(node["leisure"="fitness_centre"](around:5000,${latitude},${longitude});node["leisure"="gym"](around:5000,${latitude},${longitude}););out;`;
+
+                    fetch(apiUrl)
+                        .then(response => response.json())
+                        .then(data => displayGyms(data.elements, gymsList))
+                        .catch(error => console.error("Error fetching gyms:", error));
+                },
+                (error) => {
+                    console.error("Error getting location:", error);
+                    gymsList.innerHTML = "Error getting location. Please enable location services and try again.";
+                }
+            );
+        } else {
+            gymsList.innerHTML = "Geolocation is not supported by your browser.";
+        }
+    }
+
+    function displayGyms(elements, gymsList) {
+        const gyms = elements.filter(element => element.tags["name"]);
+
+        if (gyms.length > 0) {
+            gymsList.innerHTML = "<strong>Nearest Gyms:</strong><ul>";
+
+            gyms.forEach(gym => {
+                gymsList.innerHTML += `<li>${gym.tags["name"]}</li>`;
+            });
+
+            gymsList.innerHTML += "</ul>";
+        } else {
+            gymsList.innerHTML = "No gyms found near your location.";
+        }
+    }
+
+    findGymsNearMe();
+</script>
+<footer>
+    &copy; 2024 NovaFlex Fitness. All Rights Reserved.
+</footer>
+</body>
+</html>

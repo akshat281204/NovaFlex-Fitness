@@ -1,0 +1,196 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+    background-image: url('https://wallpapercave.com/wp/wp9160535.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+header {
+    background-color: #292B2B;
+    padding: 20px;
+    text-align: center;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#profile{
+    border-radius: 50%;
+}
+
+#menu-icon {
+    display: none;
+    cursor: pointer;
+}
+
+header img#log {
+    width: 130px;
+    border-radius: 50%;
+}
+
+header #nf {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+}
+
+header ul.menu {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+header ul.menu li {
+    margin-right: 20px;
+}
+
+header ul.menu li:last-child {
+    margin-right: 0;
+}
+
+header ul.menu li a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 18px;
+    transition: color 0.3s ease;
+}
+
+header ul.menu li a:hover {
+    color: #ff6600;
+}
+
+.main-section {
+    padding: 50px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 40px;
+    color: wheat;
+    margin-bottom: 20px;
+}
+
+p {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #f4f4f4;
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 15px 30px;
+    margin-top: 20px;
+    background-color: red;
+    color: #fff;
+    text-decoration: none;
+    font-size: 18px;
+    border-radius: 25px;
+    transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+    background-color: #e64900;
+}
+
+.feature-box {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-top: 50px;
+}
+
+.feature {
+    flex: 0 1 30%;
+    padding: 20px;
+    background-color: #333;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    opacity: 0.8;
+    color: #fff;
+}
+
+.feature:hover {
+    transform: scale(1.05);
+}
+
+footer {
+    background-color: #f3e5f5;
+    border: 1px solid #ab47bc;
+    text-align: center;
+    padding: 10px 0;
+    position: sticky;
+    bottom: 0;
+    color: #333;
+}
+
+a {
+    text-decoration: none;
+    color: #fff;
+}
+
+@media only screen and (max-width: 768px) {
+    header {
+        flex-direction: column;
+    }
+
+    #menu-icon {
+        display: block;
+    }
+
+    .menu {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        background-color: #292B2B;
+        text-align: center;
+    }
+
+    .menu.show {
+        display: flex;
+    }
+
+    .menu li {
+        margin: 10px 0;
+    }
+}
+
+.profile-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.profile-dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: white;
+    min-width: 150px;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 10px 14px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
