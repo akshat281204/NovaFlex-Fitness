@@ -1,117 +1,149 @@
 from flask import Flask, render_template, request, redirect, session, url_for, jsonify
-import mysql.connector
+import firebase_admin
+from firebase_admin import credentials, firestore
+from werkzeug.security import generate_password_hash, check_password_hash
+from dotenv import load_dotenv
+import os
+from waitress import serve
+
+# Load environment variables
+load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = 'nOvAfLeX24'  #Secret key
+app.secret_key = os.getenv('SECRET_KEY')  # Ensure your .env file contains this key
 
-# MySQL database connection
-db = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="akshat@281204",
-    database="novaflex"
-)
+# Initialize Firebase
+cred = credentials.Certificate("nova-flex-19015-firebase-adminsdk-fbsvc-d5a1524cb6.json")  # path to your service account key
+firebase_admin.initialize_app(cred)
+db = firestore.client()
 
 # Route for membership page
 @app.route('/membership')
 def member():
-    cursor = db.cursor()
     username = session.get('username')
     if username:
-        cursor.execute("SELECT gold, platinum FROM users WHERE username = %s", (username,))
-        user_membership = cursor.fetchone()
-        gold_membership = user_membership[0]
-        platinum_membership = user_membership[1]
-        return render_template('mem.html', home_url=url_for('home'),
-                                         user_profile_url=url_for('signup'),
-                                         virtual_workouts_url=url_for('virtualworkout'),
-                                         gyms_near_you_url=url_for('gyms_near_you'),
-                                         gold_membership=gold_membership,
-                                         platinum_membership=platinum_membership)
-    else:
-        return render_template('mem.html', home_url=url_for('home'),
-                                         user_profile_url=url_for('signup'),
-                                         virtual_workouts_url=url_for('virtualworkout'),
-                                         gyms_near_you_url=url_for('gyms_near_you'))
-
+        user_ref = db.collection('users').document(username)
+        user_doc = user_ref.get()
+        if user_doc.exists:
+            user_data = user_doc.to_dict()
+            return render_template('mem.html',
+                                   home_url=url_for('home'),
+                                   user_profile_url=url_for('signup'),
+                                   virtual_workouts_url=url_for('virtualworkout'),
+                                   gyms_near_you_url=url_for('gyms_near_you'),
+                                   gold_membership=user_data.get('gold', 'no'),
+                                   platinum_membership=user_data.get('platinum', 'no'))
+    return render_template('mem.html',
+                           home_url=url_for('home'),
+                           user_profile_url=url_for('signup'),
+                           virtual_workouts_url=url_for('virtualworkout'),
+                           gyms_near_you_url=url_for('gyms_near_you'))
 
 # Route for membership purchase
 @app.route('/purchase_membership', methods=['POST'])
 def purchase_membership():
-    if request.method == 'POST':
-        membership_type = request.json.get('membership_type')
-        username = session.get('username')  # Get username from session
-        if username:
-            cursor = db.cursor()
-            cursor.execute("UPDATE users SET {} = 'yes' WHERE username = %s".format(membership_type), (username,))
-            db.commit()
-            return jsonify({'success': True}), 200
-        else:
-            return jsonify({'error': 'User not logged in'}), 401
+    membership_type = request.json.get('membership_type')
+    username = session.get('username')
+    if username:
+        user_ref = db.collection('users').document(username)
+        user_ref.update({membership_type: 'yes'})
+        return jsonify({'success': True}), 200
+    else:
+        return jsonify({'error': 'User not logged in'}), 401
 
-#route for gyms near you
+# Route for gyms near you
 @app.route('/gymsnearyou')
 def gyms_near_you():
-    return render_template('gny.html',   home_url=url_for('home'), 
-                                         user_profile_url=url_for('signup'),
-                                         virtual_workouts_url=url_for('virtualworkout'), 
-                                         gyms_near_you_url=url_for('gyms_near_you'))
+    return render_template('gny.html',
+                           home_url=url_for('home'),
+                           user_profile_url=url_for('signup'),
+                           virtual_workouts_url=url_for('virtualworkout'),
+                           gyms_near_you_url=url_for('gyms_near_you'))
 
-
-#route for virtualworkout
+# Route for virtual workout
 @app.route('/virtualworkout')
-def virtualworkout():  
-    return render_template('virtworkout.html',  home_url=url_for('home'), 
-                                         user_profile_url=url_for('signup'),
-                                         virtual_workouts_url=url_for('virtualworkout'), 
-                                         gyms_near_you_url=url_for('gyms_near_you')) 
+def virtualworkout():
+    return render_template('virtworkout.html',
+                           home_url=url_for('home'),
+                           user_profile_url=url_for('signup'),
+                           virtual_workouts_url=url_for('virtualworkout'),
+                           gyms_near_you_url=url_for('gyms_near_you'))
 
-#route for home page
+# Route for home page (signup/login view)
 @app.route('/')
 def signup():
     return render_template('su.html')
 
-#route for user sign up
+# Route for user signup
 @app.route('/signup', methods=['POST'])
 def signup_post():
-    if request.method == 'POST':
-        username = request.form['su_Username']
-        phone = request.form['su_Ph_no']
-        dob = request.form['su_Date_Of_Birth']
-        email = request.form['su_email']
-        password = request.form['su_password']
-        
-        cursor = db.cursor()
-        cursor.execute("INSERT INTO users (username, phone, dob, email, password) VALUES (%s, %s, %s, %s, %s)",
-                       (username, phone, dob, email, password))
-        db.commit()
-        return redirect('/home')
+    username = request.form['su_Username']
+    phone = request.form['su_Ph_no']
+    dob = request.form['su_Date_Of_Birth']
+    email = request.form['su_email']
+    password = request.form['su_password']
 
-#route for user login
+    hashed_password = generate_password_hash(password)
+
+    user_ref = db.collection('users').document(username)
+    user_ref.set({
+        'username': username,
+        'phone': phone,
+        'dob': dob,
+        'email': email,
+        'password': hashed_password,
+        'gold': 'no',
+        'platinum': 'no'
+    })
+
+    return redirect('/home')
+
+# Route for user login
 @app.route('/login', methods=['POST'])
 def login():
-    if request.method == 'POST':
-        username = request.form['li_Username']
-        password = request.form['li_password']
-        
-        cursor = db.cursor()
-        cursor.execute("SELECT * FROM users WHERE username = %s AND password = %s", (username, password))
-        user = cursor.fetchone()
-        if user:
-            session['username'] = username
-            return redirect('/home')
-        else:
-            error_message = "Invalid username or password. Please try again."
-            return render_template('su.html', error=error_message)
+    username = request.form['li_Username']
+    password = request.form['li_password']
 
-#route for home.html
+    user_ref = db.collection('users').document(username)
+    user_doc = user_ref.get()
+
+    if user_doc.exists and check_password_hash(user_doc.to_dict().get('password'), password):
+        session['username'] = username
+        return redirect('/home')
+    else:
+        error_message = "Invalid username or password. Please try again."
+        return render_template('su.html', error=error_message)
+
+# Route for home
 @app.route('/home')
 def home():
-    return render_template('home.html', home_url=url_for('home'), 
-                                         user_profile_url=url_for('signup'),
-                                         virtual_workouts_url=url_for('virtualworkout'), 
-                                         gyms_near_you_url=url_for('gyms_near_you'),
-                                         membership_url = url_for('member'))
+    return render_template('home.html',
+                           home_url=url_for('home'),
+                           user_profile_url=url_for('signup'),
+                           virtual_workouts_url=url_for('virtualworkout'),
+                           gyms_near_you_url=url_for('gyms_near_you'),
+                           membership_url=url_for('member'))
 
+# Profile route
+@app.route('/profile')
+def profile():
+    username = session.get('username')
+    if not username:
+        return redirect(url_for('signup'))
+
+    user_doc = db.collection('users').document(username).get()
+    if user_doc.exists:
+        user_data = user_doc.to_dict()
+        return render_template('profile.html', user_data=user_data)
+    else:
+        return "User not found", 404
+
+# Logout route
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('signup'))
+
+# Using Waitress to serve the app in production
 if __name__ == '__main__':
-    app.run(debug=True)
+    serve(app, host='0.0.0.0', port=5000)  # Adjust host and port as needed

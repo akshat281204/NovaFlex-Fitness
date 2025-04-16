@@ -8,29 +8,31 @@
     <link rel="stylesheet" href="../static/css/membership.css">
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById('join_gold').addEventListener('click', function () {
-                purchaseMembership('gold');
-            });
+            const goldBtn = document.getElementById('join_gold');
+            const platinumBtn = document.getElementById('join_platinum');
 
-            document.getElementById('join_platinum').addEventListener('click', function () {
-                purchaseMembership('platinum');
-            });
+            if (goldBtn) {
+                goldBtn.addEventListener('click', () => purchaseMembership('gold'));
+            }
+            if (platinumBtn) {
+                platinumBtn.addEventListener('click', () => purchaseMembership('platinum'));
+            }
 
             function purchaseMembership(membershipType) {
-                //Send AJAX request to the server to update the membership
-                var xhr = new XMLHttpRequest();
-                xhr.open('POST', '/purchase_membership', true);
-                xhr.setRequestHeader('Content-Type', 'application/json');
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState === XMLHttpRequest.DONE) {
-                        if (xhr.status === 200) {
-                            window.location.href = '/home'; // Redirects to home page after successful purchase
-                        } else {
-                            console.error('Failed to purchase membership');
-                        }
+                fetch('/purchase_membership', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ membership_type: membershipType })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = '/home';
+                    } else {
+                        console.error('Failed to purchase membership');
                     }
-                };
-                xhr.send(JSON.stringify({ membership_type: membershipType }));
+                });
             }
         });
     </script>
@@ -53,12 +55,13 @@
 
     <section id="membership">
         <h2>Membership Tiers</h2>
+
         <div class="membership-tier">
             <h3>Gold Membership</h3>
             <p>Access to virtual classes, personalized workout plans, and exclusive content.</p>
             <p>Price: 299 Rs/month</p>
             {% if gold_membership == 'yes' %}
-                <p>Enrolled</p>
+                <p>✅ Enrolled</p>
             {% else %}
                 <button id="join_gold">Join Now</button>
             {% endif %}
@@ -69,7 +72,7 @@
             <p>All features of Gold Membership, plus priority access to live sessions and nutrition guidance.</p>
             <p>Price: 599 Rs/month</p>
             {% if platinum_membership == 'yes' %}
-                <p>Enrolled</p>
+                <p>✅ Enrolled</p>
             {% else %}
                 <button id="join_platinum">Join Now</button>
             {% endif %}
