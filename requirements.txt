@@ -2,3 +2,4 @@ flask
 firebase-admin
 werkzeug
 python-dotenv
+waitress
