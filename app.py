@@ -18,7 +18,7 @@ firebase_credentials = os.getenv('firebase_credentials')
 cred_dict = json.loads(firebase_credentials)
 
 cred = credentials.Certificate(cred_dict)
-initialize_app(cred)
+firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 # Route for membership page
