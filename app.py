@@ -5,16 +5,20 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 import os
 from waitress import serve
+import json
 
 # Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.getenv('SECRET_KEY')  # Ensure your .env file contains this key
+app.secret_key = os.getenv('secret_key')
 
-# Initialize Firebase
-cred = credentials.Certificate("nova-flex-19015-firebase-adminsdk-fbsvc-d5a1524cb6.json")  # path to your service account key
-firebase_admin.initialize_app(cred)
+firebase_credentials = os.getenv('firebase_credentials')
+
+cred_dict = json.loads(firebase_credentials)
+
+cred = credentials.Certificate(cred_dict)
+initialize_app(cred)
 db = firestore.client()
 
 # Route for membership page

@@ -6,10 +6,6 @@
         "use": "@vercel/python"
       }
     ],
-    "env": {
-      "FIREBASE_CREDENTIALS": @firebase_credentials,
-      "SECRET_KEY": @secret_key
-    },
     "routes": [
       {
         "src": "/(.*)",
