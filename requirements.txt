@@ -1,5 +1,4 @@
-flask
-firebase-admin
-werkzeug
-python-dotenv
-waitress
+flask==2.3.3
+firebase-admin==6.4.0
+werkzeug==2.3.7
+python-dotenv==1.0.1

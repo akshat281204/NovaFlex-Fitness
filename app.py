@@ -12,12 +12,17 @@ load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv('secret_key')
+# app.secret_key = 'nOvAfLeX24'
 
 firebase_credentials = os.getenv('firebase_credentials')
-
 cred_dict = json.loads(firebase_credentials)
-
 cred = credentials.Certificate(cred_dict)
+
+# firebase_credentials_path = "nova-flex-19015-firebase-adminsdk-fbsvc-d5a1524cb6.json"
+# with open(firebase_credentials_path, 'r') as cred_file:
+#     firebase_credentials = json.load(cred_file)
+# cred = credentials.Certificate(firebase_credentials)
+
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
@@ -148,6 +153,6 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('signup'))
 
-# Using Waitress to serve the app in production
 if __name__ == '__main__':
-    serve(app, host='0.0.0.0', port=5000)  # Adjust host and port as needed
+    port = int(os.environ.get("PORT", 5000))
+    app.run(debug=False, host='0.0.0.0', port=port)
