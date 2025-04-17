@@ -16,14 +16,7 @@ app.secret_key = os.getenv('secret_key')
 firebase_credentials_b64 = os.environ.get("firebase_credentials")
 firebase_credentials_json = base64.b64decode(firebase_credentials_b64).decode("utf-8")
 cred_dict = json.loads(firebase_credentials_json)
-# firebase_credentials = os.getenv('firebase_credentials')
-# cred_dict = json.loads(firebase_credentials)
 cred = credentials.Certificate(cred_dict)
-
-# firebase_credentials_path = "nova-flex-19015-firebase-adminsdk-fbsvc-d5a1524cb6.json"
-# with open(firebase_credentials_path, 'r') as cred_file:
-#     firebase_credentials = json.load(cred_file)
-# cred = credentials.Certificate(firebase_credentials)
 
 firebase_admin.initialize_app(cred)
 db = firestore.client()
@@ -155,5 +148,5 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('signup'))
 
-# Vercel requires this
+# Vercel handler (no need for app.run())
 handler = app
