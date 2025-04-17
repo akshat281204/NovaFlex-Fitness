@@ -12,7 +12,6 @@ load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv('secret_key')
-# app.secret_key = 'nOvAfLeX24'
 
 firebase_credentials_b64 = os.environ.get("firebase_credentials")
 firebase_credentials_json = base64.b64decode(firebase_credentials_b64).decode("utf-8")
@@ -156,8 +155,5 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('signup'))
 
-if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))
-    app.run(debug=False, host='0.0.0.0', port=port)
-
+# Vercel requires this
 handler = app
