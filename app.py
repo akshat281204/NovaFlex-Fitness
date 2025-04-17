@@ -148,6 +148,5 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('signup'))
 
-# Vercel Handler Function
-def handler(request, response):
-    return app(request, response)
+# This is what Vercel expects to handle requests in a serverless function.
+# No need to define a custom handler.
