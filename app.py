@@ -148,5 +148,6 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('signup'))
 
-# Vercel handler (no need for app.run())
-handler = app
+# Vercel handler function (No app.run())
+def handler(req, res):
+    return app(req, res)
