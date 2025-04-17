@@ -3,76 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NovaFlex Fitness</title>
+    <title>NovaFlex Fitness - Sign Up or Login</title>
     <link rel="stylesheet" href="../static/css/su.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
 </head>
 <body>
-    <div id="logo2">
-        <br><br>
-        <img src="../static/images/NovaFlex logo.png" alt="NovaFlex Logo">
-        <br><br><br><br>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="logo-container">
+                <img src="../static/images/NovaFlex logo.png" alt="NovaFlex Logo" class="logo">
+                <h1>NovaFlex Fitness</h1>
+            </div>
+            
+            <div class="tabs">
+                <button class="tab-btn active" id="signup-tab">Sign Up</button>
+                <button class="tab-btn" id="login-tab">Login</button>
+            </div>
+            
+            <!-- Sign Up Form -->
+            <form id="signup-form" action="/signup" method="post" class="auth-form">
+                {% if error %}
+                    <div class="error-message">{{ error }}</div>
+                {% endif %}
+
+                <div class="form-group">
+                    <label for="su_Username">Username</label>
+                    <input type="text" id="su_Username" name="su_Username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="su_Ph_no">Phone Number</label>
+                    <input type="tel" id="su_Ph_no" name="su_Ph_no" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="su_Date_Of_Birth">Date Of Birth</label>
+                    <input type="date" id="su_Date_Of_Birth" name="su_Date_Of_Birth" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="su_email">Email</label>
+                    <input type="email" id="su_email" name="su_email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="su_password">Password</label>
+                    <input type="password" id="su_password" name="su_password" required>
+                </div>
+                
+                <button type="submit" class="submit-btn">Create Account</button>
+                <p class="form-footer">Already have an account? <a href="#" id="toggle-login">Login</a></p>
+            </form>
+
+            <!-- Login Form -->
+            <form id="login-form" action="/login" method="post" class="auth-form" style="display:none;">
+                {% if error %}
+                    <div class="error-message">{{ error }}</div>
+                {% endif %}
+
+                <div class="form-group">
+                    <label for="li_Username">Username</label>
+                    <input type="text" id="li_Username" name="li_Username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="li_password">Password</label>
+                    <input type="password" id="li_password" name="li_password" required>
+                </div>
+                
+                <button type="submit" class="submit-btn">Login</button>
+                <p class="form-footer">Don't have an account? <a href="#" id="toggle-signup">Sign Up</a></p>
+            </form>
+        </div>
     </div>
 
-    <div id="forms-container">
-        <!-- Sign Up Form -->
-        <form id="signup-form" action="/signup" method="post">
-            <h2>Sign Up</h2>
-            {% if error %}
-                <p style="color: red;">{{ error }}</p>
-            {% endif %}
-
-            <label for="su_Username">Username:</label>
-            <input type="text" id="su_Username" name="su_Username" required>
-
-            <label for="su_Ph_no">Phone No.:</label>
-            <input type="tel" id="su_Ph_no" name="su_Ph_no" required>
-
-            <label for="su_Date_Of_Birth">Date Of Birth:</label>
-            <input type="date" id="su_Date_Of_Birth" name="su_Date_Of_Birth" required>
-
-            <label for="su_Email">Email:</label>
-            <input type="email" id="su_email" name="su_email" required>
-
-            <label for="su_Password">Password:</label>
-            <input type="password" id="su_password" name="su_password" required>
-            
-            <button type="submit">Sign Up</button>
-            <p>Already have an account? <a href="#" id="toggle-login">Login</a></p>
-        </form>
-
-        <!-- Login Form -->
-        <form id="login-form" action="/login" method="post" style="display:none;">
-            <h2>Login</h2>
-            {% if error %}
-                <p style="color: red;">{{ error }}</p>
-            {% endif %}
-
-            <label for="li_Username">Username:</label>
-            <input type="text" id="li_Username" name="li_Username" required>
-
-            <label for="li_Password">Password:</label>
-            <input type="password" id="li_password" name="li_password" required>
-            
-            <button type="submit">Login</button>
-            <p>Don't have an account? <a href="#" id="toggle-signup">Sign Up</a></p>
-        </form>
-    </div>
-
-    <footer>
-        &copy; 2024 NovaFlex Fitness. All Rights Reserved.
+    <footer class="site-footer">
+        <p>&copy; 2024 NovaFlex Fitness. All Rights Reserved.</p>
     </footer>
 
     <script>
-        document.getElementById('toggle-login').addEventListener('click', function(e) {
-            e.preventDefault();
+        // Tab switching
+        document.getElementById('signup-tab').addEventListener('click', function() {
+            this.classList.add('active');
+            document.getElementById('login-tab').classList.remove('active');
+            document.getElementById('signup-form').style.display = 'block';
+            document.getElementById('login-form').style.display = 'none';
+        });
+
+        document.getElementById('login-tab').addEventListener('click', function() {
+            this.classList.add('active');
+            document.getElementById('signup-tab').classList.remove('active');
             document.getElementById('signup-form').style.display = 'none';
             document.getElementById('login-form').style.display = 'block';
         });
 
+        // Form toggle links
+        document.getElementById('toggle-login').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('login-tab').click();
+        });
+
         document.getElementById('toggle-signup').addEventListener('click', function(e) {
             e.preventDefault();
-            document.getElementById('signup-form').style.display = 'block';
-            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('signup-tab').click();
         });
     </script>
 </body>

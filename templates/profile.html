@@ -2,62 +2,100 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile - NovaFlex</title>
     <link rel="stylesheet" href="../static/css/profile.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-            background-color: #f8f8f8;
-            color: #333;
-        }
-
-        h1 {
-            color: #222;
-            text-align: center;
-        }
-
-        ul {
-            max-width: 400px;
-            margin: 20px auto;
-            padding: 0;
-            list-style-type: none;
-        }
-
-        ul li {
-            background-color: #fff;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.05);
-        }
-
-        .logout-btn {
-            display: block;
-            width: fit-content;
-            margin: 30px auto;
-            padding: 10px 20px;
-            background-color: #d9534f;
-            color: white;
-            text-decoration: none;
-            border-radius: 6px;
-        }
-
-        .logout-btn:hover {
-            background-color: #c9302c;
-        }
-    </style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
 </head>
 <body>
-    <h1>User Profile</h1>
-    <ul>
-        <li><strong>Username:</strong> {{ user_data.username }}</li>
-        <li><strong>Email:</strong> {{ user_data.email }}</li>
-        <li><strong>Phone:</strong> {{ user_data.phone }}</li>
-        <li><strong>Date of Birth:</strong> {{ user_data.dob }}</li>
-        <li><strong>Gold Membership:</strong> {{ user_data.gold }}</li>
-        <li><strong>Platinum Membership:</strong> {{ user_data.platinum }}</li>
-    </ul>
-    <a href="/logout" class="logout-btn">Logout</a>
+    <header class="site-header">
+        <div class="container">
+            <div class="logo-container">
+                <h1>NovaFlex Fitness</h1>
+            </div>
+            <button class="mobile-menu-toggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="{{ home_url }}">Home</a></li>
+                    <li><a href="{{ virtual_workouts_url }}">Workouts</a></li>
+                    <li><a href="{{ gyms_near_you_url }}">Gyms</a></li>
+                    <li><a href="/profile" class="active">Profile</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="profile-section">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <img src="https://www.w3schools.com/howto/img_avatar.png" alt="User Avatar">
+                </div>
+                <h1>User Profile</h1>
+            </div>
+            
+            <div class="profile-card">
+                <div class="profile-info">
+                    <div class="info-item">
+                        <span class="info-label">Username</span>
+                        <span class="info-value">{{ user_data.username }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Email</span>
+                        <span class="info-value">{{ user_data.email }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Phone</span>
+                        <span class="info-value">{{ user_data.phone }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Date of Birth</span>
+                        <span class="info-value">{{ user_data.dob }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="membership-card">
+                <h2>Membership Status</h2>
+                <div class="membership-info">
+                    <div class="membership-item {{ 'active' if user_data.gold == 'yes' else '' }}">
+                        <div class="membership-icon gold-icon"></div>
+                        <div class="membership-details">
+                            <h3>Gold Membership</h3>
+                            <span class="status">{{ "Active" if user_data.gold == 'yes' else "Inactive" }}</span>
+                        </div>
+                    </div>
+                    <div class="membership-item {{ 'active' if user_data.platinum == 'yes' else '' }}">
+                        <div class="membership-icon platinum-icon"></div>
+                        <div class="membership-details">
+                            <h3>Platinum Membership</h3>
+                            <span class="status">{{ "Active" if user_data.platinum == 'yes' else "Inactive" }}</span>
+                        </div>
+                    </div>
+                </div>
+                <a href="{{ membership_url }}" class="upgrade-btn">Manage Membership</a>
+            </div>
+            
+            <a href="/logout" class="logout-btn">Logout</a>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2024 NovaFlex Fitness. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.querySelector('.mobile-menu-toggle').addEventListener('click', function() {
+            document.querySelector('.main-nav').classList.toggle('active');
+            this.classList.toggle('active');
+        });
+    </script>
 </body>
 </html>

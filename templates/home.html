@@ -1,113 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NovaFlex Fitness - Home</title>
     <link rel="stylesheet" href="../static/css/home.css">
-    <style>
-        .profile-dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .profile-dropdown img {
-            cursor: pointer;
-            border-radius: 50%;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            right: 0;
-            background-color: white;
-            min-width: 150px;
-            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-            z-index: 1;
-        }
-
-        .dropdown-content a {
-            color: black;
-            padding: 10px 14px;
-            text-decoration: none;
-            display: block;
-        }
-
-        .dropdown-content a:hover {
-            background-color: #ddd;
-        }
-
-        .profile-dropdown:hover .dropdown-content {
-            display: block;
-        }
-    </style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
 </head>
-
 <body>
-    <header>
-        <span id="menu-icon">&#9776;</span>
-        <img id="log" src="https://i.pinimg.com/originals/65/56/67/6556672b79c8cefe5e223471c0a1c7b4.jpg" alt="Logo">
-        <h1 id="nf">NovaFlex Fitness</h1>
-        <ul class="menu">
-            <li><a href="{{ home_url }}">Home</a></li>
-            <li><a href="{{ virtual_workouts_url }}">Workouts</a></li>
-            <li><a href="https://www.instagram.com/akshat_281204?igsh=MTE5aDl6cjhuNnRiNw==">Contact</a></li>
-            <li class="profile-dropdown">
-                <img id="profile" src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar" width="60">
-                <div class="dropdown-content">
-                    <a href="/profile">View Profile</a>
-                    <a href="/logout">Logout</a>
-                </div>
-            </li>
-        </ul>
+    <header class="site-header">
+        <div class="container">
+            <div class="logo-container">
+                <img src="https://i.pinimg.com/originals/65/56/67/6556672b79c8cefe5e223471c0a1c7b4.jpg" alt="NovaFlex Logo" class="logo">
+                <h1>NovaFlex Fitness</h1>
+            </div>
+            <button class="mobile-menu-toggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="{{ home_url }}" class="active">Home</a></li>
+                    <li><a href="{{ virtual_workouts_url }}">Workouts</a></li>
+                    <li><a href="https://www.instagram.com/akshat_281204?igsh=MTE5aDl6cjhuNnRiNw==">Contact</a></li>
+                    <li class="profile-dropdown">
+                        <div class="dropdown-trigger">
+                            <img src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar" class="avatar">
+                            <span class="dropdown-arrow">▼</span>
+                        </div>
+                        <div class="dropdown-content">
+                            <a href="/profile">View Profile</a>
+                            <a href="/logout">Logout</a>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
     </header>
 
-    <div class="main-section">
-        <h1>Welcome to NovaFlex Fitness</h1>
-        <p>Transform your body and mind with our cutting-edge fitness programs. We are committed to helping you achieve your fitness goals and live a healthier lifestyle.</p>
-        <a href="{{ membership_url }}" class="cta-button">Get Started</a>
+    <main>
+        <section class="hero-section">
+            <div class="container">
+                <div class="hero-content">
+                    <h1>Welcome to NovaFlex Fitness</h1>
+                    <p>Transform your body and mind with our cutting-edge fitness programs. We are committed to helping you achieve your fitness goals and live a healthier lifestyle.</p>
+                    <a href="{{ membership_url }}" class="cta-button">Get Started</a>
+                </div>
+            </div>
+        </section>
 
-        <div class="feature-box">
-            <div class="feature">
-                <h2><a href="{{ virtual_workouts_url }}">Virtual Workouts</a></h2>
-                <p>Experience high-intensity virtual workouts that will boost your muscle strength and burn calories.</p>
+        <section class="features-section">
+            <div class="container">
+                <h2 class="section-title">Our Services</h2>
+                
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon workout-icon"></div>
+                        <h3><a href="{{ virtual_workouts_url }}">Virtual Workouts</a></h3>
+                        <p>Experience high-intensity virtual workouts that will boost your muscle strength and burn calories.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon diet-icon"></div>
+                        <h3><a href="https://www.healthifyme.com/blog/the-ultimate-7-day-gym-diet-plan/#google_vignette">Diet Plans</a></h3>
+                        <p>Get Diet Plans for different body training practices.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon yoga-icon"></div>
+                        <h3><a href="https://youtu.be/dAqQqmaI9vY?feature=shared">Yoga & Meditation</a></h3>
+                        <p>Balance your body and mind with our relaxing yoga and meditation sessions.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon gym-icon"></div>
+                        <h3><a href="{{ gyms_near_you_url }}">Gyms Near You</a></h3>
+                        <p>Find all the gyms near you reducing the work of going outside to find a good one.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon equipment-icon"></div>
+                        <h3><a href="https://cultsport.com/gym-equipment">Equipments</a></h3>
+                        <p>All the required Equipments at one place.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon supplement-icon"></div>
+                        <h3><a href="https://cultsport.com/supplements">Supplements</a></h3>
+                        <p>All the required Supplements at one place.</p>
+                    </div>
+                </div>
             </div>
-            <div class="feature">
-                <h2><a href="https://www.healthifyme.com/blog/the-ultimate-7-day-gym-diet-plan/#google_vignette">Diet Plans</a></h2>
-                <p>Get Diet Plans for different body training practices.</p>
-            </div>
-            <div class="feature">
-                <h2><a href="https://youtu.be/dAqQqmaI9vY?feature=shared">Yoga & Meditation</a></h2>
-                <p>Balance your body and mind with our relaxing yoga and meditation sessions.</p>
-            </div>
-        </div>
-        <div class="feature-box">
-            <div class="feature">
-                <h2><a href="{{ gyms_near_you_url }}">Gyms Near You</a></h2>
-                <p>Find all the gyms near you reducing the work of going outside to find a good one.</p>
-            </div>
-            <div class="feature">
-                <h2><a href="https://cultsport.com/gym-equipment">Equipments</a></h2>
-                <p>All the required Equipments at one place.</p>
-            </div>
-            <div class="feature">
-                <h2><a href="https://cultsport.com/supplements">Supplements</a></h2>
-                <p>All the required Supplements at one place.</p>
-            </div>
-        </div>
-    </div>
+        </section>
+    </main>
 
-    <footer>
-        &copy; 2024 NovaFlex Fitness. All Rights Reserved.
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2024 NovaFlex Fitness. All Rights Reserved.</p>
+        </div>
     </footer>
 
     <script>
-        document.getElementById("menu-icon").addEventListener("click", function () {
-            var menu = document.querySelector(".menu");
-            menu.classList.toggle("show");
+        // Mobile menu toggle
+        document.querySelector('.mobile-menu-toggle').addEventListener('click', function() {
+            document.querySelector('.main-nav').classList.toggle('active');
+            this.classList.toggle('active');
+        });
+
+        // Original profile dropdown functionality
+        document.querySelector('.profile-dropdown').addEventListener('click', function(e) {
+            this.classList.toggle('open');
+            e.stopPropagation();
+        });
+
+        document.addEventListener('click', function() {
+            document.querySelector('.profile-dropdown').classList.remove('open');
         });
     </script>
 </body>
-
 </html>

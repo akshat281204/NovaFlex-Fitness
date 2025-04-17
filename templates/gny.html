@@ -3,74 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Find Gyms Near You</title>
+    <title>Find Gyms Near You - NovaFlex</title>
     <link rel="stylesheet" href="../static/css/gny.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
 </head>
 <body>
-    <header>
-        <h1>NovaFlex Fitness</h1>
-        <nav>
-            <ul>
-                <li><a href="{{ home_url }}">Home</a></li>
-                <li><a href="{{ virtual_workouts_url }}" class="active">Virtual Workouts</a></li>
-                <li><a href="{{ gyms_near_you_url }}">Gyms Near You</a></li>
-                <li><a href="https://youtu.be/dAqQqmaI9vY?feature=shared">Yoga</a></li>
-                <li><a href="https://www.instagram.com/akshat_281204?igsh=MTE5aDl6cjhuNnRiNw==">About Us</a></li>
-                <li><a href="{{ user_profile_url }}">Logout</a></li>
-            </ul>
-        </nav>
+    <header class="site-header">
+        <div class="container">
+            <div class="logo-container">
+                <h1>NovaFlex Fitness</h1>
+            </div>
+            <button class="mobile-menu-toggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="{{ home_url }}">Home</a></li>
+                    <li><a href="{{ virtual_workouts_url }}">Virtual Workouts</a></li>
+                    <li><a href="{{ gyms_near_you_url }}" class="active">Gyms Near You</a></li>
+                    <li><a href="https://youtu.be/dAqQqmaI9vY?feature=shared">Yoga</a></li>
+                    <li><a href="https://www.instagram.com/akshat_281204?igsh=MTE5aDl6cjhuNnRiNw==">About Us</a></li>
+                    <li><a href="{{ user_profile_url }}">Profile</a></li>
+                </ul>
+            </nav>
+        </div>
     </header>
-    <div class="gym-body">
-        <h1>Find Gyms and Meditation Centres Near You</h1>
-        <div id="gyms-list"></div>
-    </div>
-<script>
-    function findGymsNearMe() {
-        const gymsList = document.getElementById("gyms-list");
 
-        if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const { latitude, longitude } = position.coords;
+    <main>
+        <section class="hero-section">
+            <div class="container">
+                <h1>Find Gyms and Meditation Centres Near You</h1>
+                <p>Discover the best fitness facilities in your area with just one click</p>
+            </div>
+        </section>
 
-                    // Using OpenStreetMap Overpass API to find gyms near the user's location
-                    const apiUrl = `https://overpass-api.de/api/interpreter?data=[out:json];(node["leisure"="fitness_centre"](around:5000,${latitude},${longitude});node["leisure"="gym"](around:5000,${latitude},${longitude}););out;`;
+        <section class="gyms-section container">
+            <div class="location-status">
+                <div class="status-indicator">
+                    <div class="spinner"></div>
+                    <p>Locating gyms near you...</p>
+                </div>
+            </div>
+            
+            <div id="gyms-list" class="gyms-list">
+                <!-- Gym results will be displayed here -->
+            </div>
+        </section>
+    </main>
 
-                    fetch(apiUrl)
-                        .then(response => response.json())
-                        .then(data => displayGyms(data.elements, gymsList))
-                        .catch(error => console.error("Error fetching gyms:", error));
-                },
-                (error) => {
-                    console.error("Error getting location:", error);
-                    gymsList.innerHTML = "Error getting location. Please enable location services and try again.";
-                }
-            );
-        } else {
-            gymsList.innerHTML = "Geolocation is not supported by your browser.";
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2024 NovaFlex Fitness. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.querySelector('.mobile-menu-toggle').addEventListener('click', function() {
+            document.querySelector('.main-nav').classList.toggle('active');
+            this.classList.toggle('active');
+        });
+
+        function findGymsNearMe() {
+            const gymsList = document.getElementById("gyms-list");
+            const statusIndicator = document.querySelector('.status-indicator');
+
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const { latitude, longitude } = position.coords;
+
+                        // Using OpenStreetMap Overpass API to find gyms near the user's location
+                        const apiUrl = `https://overpass-api.de/api/interpreter?data=[out:json];(node["leisure"="fitness_centre"](around:5000,${latitude},${longitude});node["leisure"="gym"](around:5000,${latitude},${longitude}););out;`;
+
+                        statusIndicator.innerHTML = '<div class="spinner"></div><p>Finding gyms...</p>';
+
+                        fetch(apiUrl)
+                            .then(response => response.json())
+                            .then(data => {
+                                displayGyms(data.elements, gymsList);
+                                statusIndicator.style.display = 'none';
+                            })
+                            .catch(error => {
+                                console.error("Error fetching gyms:", error);
+                                statusIndicator.innerHTML = '<p class="error">Error finding gyms. Please try again.</p>';
+                            });
+                    },
+                    (error) => {
+                        console.error("Error getting location:", error);
+                        statusIndicator.innerHTML = '<p class="error">Error getting location. Please enable location services and try again.</p>';
+                    }
+                );
+            } else {
+                statusIndicator.innerHTML = '<p class="error">Geolocation is not supported by your browser.</p>';
+            }
         }
-    }
 
-    function displayGyms(elements, gymsList) {
-        const gyms = elements.filter(element => element.tags["name"]);
+        function displayGyms(elements, gymsList) {
+            const gyms = elements.filter(element => element.tags["name"]);
 
-        if (gyms.length > 0) {
-            gymsList.innerHTML = "<strong>Nearest Gyms:</strong><ul>";
+            if (gyms.length > 0) {
+                let html = '<h2>Nearest Gyms</h2><div class="gyms-grid">';
 
-            gyms.forEach(gym => {
-                gymsList.innerHTML += `<li>${gym.tags["name"]}</li>`;
-            });
+                gyms.forEach(gym => {
+                    html += `
+                        <div class="gym-card">
+                            <div class="gym-icon"></div>
+                            <h3>${gym.tags["name"]}</h3>
+                            <p class="gym-type">${gym.tags["leisure"] === "fitness_centre" ? "Fitness Center" : "Gym"}</p>
+                            ${gym.tags["phone"] ? `<p class="gym-contact">📞 ${gym.tags["phone"]}</p>` : ''}
+                            ${gym.tags["website"] ? `<a href="${gym.tags["website"]}" class="gym-website" target="_blank">Visit Website</a>` : ''}
+                        </div>
+                    `;
+                });
 
-            gymsList.innerHTML += "</ul>";
-        } else {
-            gymsList.innerHTML = "No gyms found near your location.";
+                html += '</div>';
+                gymsList.innerHTML = html;
+            } else {
+                gymsList.innerHTML = `
+                    <div class="no-results">
+                        <h2>No Gyms Found</h2>
+                        <p>We couldn't find any gyms near your current location.</p>
+                        <p>Try expanding your search area or check back later.</p>
+                    </div>
+                `;
+            }
         }
-    }
 
-    findGymsNearMe();
-</script>
-<footer>
-    &copy; 2024 NovaFlex Fitness. All Rights Reserved.
-</footer>
+        // Call the function when the page loads
+        window.addEventListener('load', findGymsNearMe);
+    </script>
 </body>
 </html>

@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 import os
 import json
+import base64
 
 # Load environment variables
 load_dotenv()
@@ -13,8 +14,11 @@ app = Flask(__name__)
 app.secret_key = os.getenv('secret_key')
 # app.secret_key = 'nOvAfLeX24'
 
-firebase_credentials = os.getenv('firebase_credentials')
-cred_dict = json.loads(firebase_credentials)
+firebase_credentials_b64 = os.environ.get("firebase_credentials")
+firebase_credentials_json = base64.b64decode(firebase_credentials_b64).decode("utf-8")
+cred_dict = json.loads(firebase_credentials_json)
+# firebase_credentials = os.getenv('firebase_credentials')
+# cred_dict = json.loads(firebase_credentials)
 cred = credentials.Certificate(cred_dict)
 
 # firebase_credentials_path = "nova-flex-19015-firebase-adminsdk-fbsvc-d5a1524cb6.json"

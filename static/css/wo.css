@@ -1,165 +1,325 @@
+/* Base Styles */
+:root {
+  --primary-color: #ff5722;
+  --secondary-color: #2c3e50;
+  --accent-color: #3498db;
+  --light-color: #f8f9fa;
+  --dark-color: #343a40;
+  --text-color: #333;
+  --border-radius: 8px;
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-    color: #233142;
-    background-image: url('../images/wo.jpg');
-    background-repeat:no-repeat;
-    background-size: cover;
+  font-family: 'Poppins', sans-serif;
+  line-height: 1.6;
+  color: var(--text-color);
+  background-color: #f5f7fa;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Header Styles */
+.site-header {
+  background-color: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.site-header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+}
+
+.logo-container h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin: 0;
+}
+
+.main-nav ul {
+  display: flex;
+  list-style: none;
+  gap: 20px;
+}
+
+.main-nav a {
+  text-decoration: none;
+  color: var(--secondary-color);
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+}
+
+.main-nav a:hover, .main-nav a.active {
+  color: var(--primary-color);
+  background-color: rgba(255, 87, 34, 0.1);
+}
+
+.nav-button {
+  background-color: var(--primary-color);
+  color: white !important;
+  padding: 8px 16px;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+}
+
+.nav-button:hover {
+  background-color: #e64a19;
+  transform: translateY(-2px);
+}
+
+.mobile-menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  z-index: 1001;
+}
+
+.mobile-menu-toggle span {
+  display: block;
+  width: 25px;
+  height: 3px;
+  margin: 5px 0;
+  background-color: var(--secondary-color);
+  transition: var(--transition);
+}
+
+/* Hero Section */
+.hero-section {
+  background: linear-gradient(135deg, var(--primary-color), #ff9800);
+  color: white;
+  text-align: center;
+  padding: 60px 20px;
+  margin-bottom: 40px;
+}
+
+.hero-section h2 {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+}
+
+.hero-section .subtitle {
+  font-size: 1.1rem;
+  max-width: 700px;
+  margin: 0 auto;
+  opacity: 0.9;
+}
+
+/* Workout Categories */
+.workout-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 30px;
+  margin-bottom: 60px;
+}
+
+.workout-category {
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 30px;
+  box-shadow: var(--box-shadow);
+  transition: var(--transition);
+  text-align: center;
+}
+
+.workout-category:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.category-icon {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 20px;
+  background-color: rgba(255, 87, 34, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.workout-category h3 {
+  color: var(--secondary-color);
+  margin-bottom: 15px;
+  font-size: 1.3rem;
+}
+
+.workout-category p {
+  color: #666;
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+}
+
+.btn-view {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: var(--primary-color);
+  color: white;
+  text-decoration: none;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.btn-view:hover {
+  background-color: #e64a19;
+  transform: translateY(-2px);
+}
+
+/* Video Sections */
+.video-section {
+  margin-bottom: 60px;
+  scroll-margin-top: 100px;
+}
+
+.video-section h2 {
+  color: var(--secondary-color);
+  margin-bottom: 25px;
+  font-size: 1.8rem;
+  text-align: center;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.video-section h2:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background-color: var(--primary-color);
+}
+
+.video-container {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+  height: 0;
+  overflow: hidden;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+.video-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Footer */
+.site-footer {
+  background-color: var(--secondary-color);
+  color: white;
+  text-align: center;
+  padding: 30px 0;
+  margin-top: 60px;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 992px) {
+  .workout-grid {
+      grid-template-columns: repeat(2, 1fr);
   }
-  
-  header {
-    background-color: #333;
-    color: #fff;
-    padding: 15px 20px;
-    text-align: center;
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-toggle {
+      display: block;
   }
-  
-  nav ul {
-    list-style: none;
-    padding: 0;
+
+  .main-nav {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 80%;
+      max-width: 300px;
+      height: 100vh;
+      background-color: white;
+      box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+      transition: right 0.3s ease;
+      z-index: 1000;
+      padding-top: 70px;
   }
-  
-  nav ul li {
-    display: inline-block;
-    margin-right: 20px;
+
+  .main-nav.active {
+      right: 0;
   }
-  
-  nav a {
-    text-decoration: none;
-    color: #fff;
-    font-size: 16px;
+
+  .main-nav ul {
+      flex-direction: column;
+      gap: 0;
   }
-  
-  section {
-    margin: 20px;
-    padding: 20px;
+
+  .main-nav li {
+      width: 100%;
   }
-  
-  #hero {
-    background-color: #f3f3f3;
+
+  .main-nav a {
+      display: block;
+      padding: 15px 20px;
+      border-radius: 0;
   }
-  
-  #workout-categories {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
+
+  .mobile-menu-toggle.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
   }
-  
+
+  .mobile-menu-toggle.active span:nth-child(2) {
+      opacity: 0;
+  }
+
+  .mobile-menu-toggle.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -6px);
+  }
+
+  .hero-section h2 {
+      font-size: 2rem;
+  }
+
+  .workout-grid {
+      grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-container h1 {
+      font-size: 1.5rem;
+  }
+
+  .hero-section {
+      padding: 40px 20px;
+  }
+
+  .hero-section h2 {
+      font-size: 1.8rem;
+  }
+
   .workout-category {
-    width: 30%;
-    margin: 15px;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
+      padding: 20px;
   }
-  
-  .workout-category img {
-    width: 100%;
-    height: auto;
-  }
-  
-  .workout-category a {
-    display: block;
-    text-align: center;
-    margin-top: 10px;
-    color: #fff;
-    background-color: #333;
-    padding: 10px;
-    text-decoration: none;
-    border-radius: 5px;
-  }
-  
-  .workout-category a:hover {
-    background-color: #ff6600;
-  }
-  
-  #cardio-videos
-  #chest-videos
-  #shoulder-videos
-  #legs-videos 
-  #back-videos
-  #arm-videos {
-    margin-top: 30px;
-  }
-  
-  .video-container {
-    position: relative;
-    overflow: hidden;
-    padding-bottom: 56.25%;
-    height: 0;
-  }
-  
-  .video-container iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-  
-  #contact {
-    background-color: #222831;
-  }
-  
-  form {
-    margin-top: 20px;
-  }
-  
-  form label {
-    display: block;
-    margin-bottom: 5px;
-  }
-  
-  form input,
-  form textarea {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-  }
-  
-  form button {
-    background-color: #333;
-    color: #fff;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  form button:hover {
-    background-color: #ff6600;
-  }
-  
-  footer {
-    background-color: #333;
-    color: #fff;
-    text-align: center;
-    padding: 10px;
-    position: sticky;
-    bottom: 0;
-  }
-  
-  #cen {
-    text-align: center;
-  }
-  
-  h1,h2,h3 {
-    color: wheat;
-  }
-  
-  footer {
-    background-color: #f3e5f5;
-    border: 1px solid #ab47bc;
-    text-align: center;
-    padding: 0.5px;
-    position: sticky;
-    bottom: 0;
-  }
-  
-  p{
-    color: white;
-  }
+}
