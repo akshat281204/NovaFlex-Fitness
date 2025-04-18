@@ -158,7 +158,7 @@ def create_order():
     secret_key = os.getenv("cf_secret_key")
     environment = os.getenv("cf_env")
 
-    url = f"https://sandbox.cashfree.com/pg/orders" if environment == 'test' else f"https://api.cashfree.com/pg/orders"
+    url = "https://sandbox.cashfree.com/pg/orders" if environment == 'test' else "https://api.cashfree.com/pg/orders"
 
     headers = {
         "accept": "application/json",
@@ -168,14 +168,15 @@ def create_order():
         "x-client-secret": secret_key
     }
 
+    user_doc = db.collection('users').document(username).get().to_dict()
     payload = {
         "order_id": order_id,
         "order_amount": 299 if membership_type == "gold" else 599,
         "order_currency": "INR",
         "customer_details": {
             "customer_id": username,
-            "customer_email": db.collection('users').document(username).get().to_dict().get("email"),
-            "customer_phone": db.collection('users').document(username).get().to_dict().get("phone")
+            "customer_email": user_doc.get("email"),
+            "customer_phone": user_doc.get("phone")
         },
         "order_meta": {
             "return_url": f"http://127.0.0.1:5000/payment_success?order_id={order_id}&membership_type={membership_type}"
@@ -183,7 +184,14 @@ def create_order():
     }
 
     response = requests.post(url, headers=headers, json=payload)
-    return jsonify(response.json())
+    response_data = response.json()
+
+    if 'payment_link' in response_data:
+        return jsonify({'payment_link': response_data['payment_link']})
+    else:
+        return jsonify({'error': 'Payment link not received', 'cashfree_response': response_data}), 400
+
+
 
 @app.route('/payment_success')
 def payment_success():
