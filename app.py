@@ -8,12 +8,14 @@ import json
 import base64
 import requests
 import uuid
+from flask_cors import CORS
 
 # Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv('secret_key')
+CORS(app)
 
 firebase_credentials_b64 = os.environ.get("firebase_credentials")
 firebase_credentials_json = base64.b64decode(firebase_credentials_b64).decode("utf-8")
