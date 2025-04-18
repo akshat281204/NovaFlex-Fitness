@@ -119,4 +119,113 @@ def member():
 
 @app.route('/purchase_membership', methods=['POST'])
 def purchase_membership():
-    membership_type = request
+    membership_type = request.json.get('membership_type')
+    username = session.get('username')
+    if username:
+        user_ref = db.collection('users').document(username)
+        user_ref.update({membership_type: 'yes'})
+        return jsonify({'success': True}), 200
+    else:
+        return jsonify({'error': 'User not logged in'}), 401
+
+@app.route('/gymsnearyou')
+def gyms_near_you():
+    return render_template('gny.html',
+                           home_url=url_for('home'),
+                           user_profile_url=url_for('signup'),
+                           virtual_workouts_url=url_for('virtualworkout'),
+                           gyms_near_you_url=url_for('gyms_near_you'))
+
+@app.route('/virtualworkout')
+def virtualworkout():
+    return render_template('virtworkout.html',
+                           home_url=url_for('home'),
+                           user_profile_url=url_for('signup'),
+                           virtual_workouts_url=url_for('virtualworkout'),
+                           gyms_near_you_url=url_for('gyms_near_you'))
+
+@app.route('/create_order', methods=['POST'])
+def create_order():
+    data = request.json
+    membership_type = data.get('membership_type')
+    username = session.get('username')
+
+    if not username:
+        return jsonify({'error': 'Not logged in'}), 401
+
+    # ENV VARS
+    app_id = os.getenv("cf_id")
+    secret_key = os.getenv("cf_secret_key")
+    environment = os.getenv("cf_env")
+
+    # Debug logs
+    print("🛠️  Cashfree Debug Info:")
+    print(f"Environment: {environment}")
+    print(f"App ID: {app_id}")
+    print(f"Secret Key starts with: {secret_key[:4]}")
+    
+    url = "https://sandbox.cashfree.com/pg/orders" if environment == 'test' else "https://api.cashfree.com/pg/orders"
+    print(f"Target URL: {url}")
+
+    order_id = str(uuid.uuid4())
+    user_doc = db.collection('users').document(username).get().to_dict()
+
+    headers = {
+        "accept": "application/json",
+        "x-api-version": "2022-09-01",
+        "content-type": "application/json",
+        "x-client-id": app_id,
+        "x-client-secret": secret_key
+    }
+
+    payload = {
+        "order_id": order_id,
+        "order_amount": 299 if membership_type == "gold" else 599,
+        "order_currency": "INR",
+        "customer_details": {
+            "customer_id": username,
+            "customer_email": user_doc.get("email"),
+            "customer_phone": user_doc.get("phone")
+        },
+        "order_meta": {
+            "return_url": f"https://nova-flex-fitness.vercel.app/payment_success?order_id={order_id}&membership_type={membership_type}&username={username}",
+            "notify_url": "https://nova-flex-fitness.vercel.app/verify_payment"
+        }
+    }
+
+    response = requests.post(url, headers=headers, json=payload)
+    
+    try:
+        response_data = response.json()
+    except Exception:
+        return jsonify({"error": "Invalid JSON from Cashfree", "text": response.text}), 500
+
+    print("📨 Cashfree Response:")
+    print(json.dumps(response_data, indent=2))
+
+    if 'payment_link' in response_data:
+        return jsonify({'payment_link': response_data['payment_link']}), 200
+    elif 'payment_session_id' in response_data:
+        return jsonify({'payment_link': response_data.get('payment_link', 'Fallback')}), 200
+    else:
+        return jsonify({
+            'error': 'Payment link not received or authentication failed',
+            'cashfree_response': response_data
+        }), 400
+
+@app.route('/payment_success')
+def payment_success():
+    username = session.get('username')
+    membership_type = request.args.get('membership_type')
+
+    if username and membership_type in ['gold', 'platinum']:
+        user_ref = db.collection('users').document(username)
+        user_ref.update({membership_type: 'yes'})
+        return redirect('/home')
+    return "Payment failed or user not logged in", 400
+
+@app.route('/verify_payment', methods=['POST'])
+def verify_payment():
+    data = request.json
+    print("✅ Payment verification webhook received:", json.dumps(data, indent=2))
+    return jsonify({"status": "received"}), 200
