@@ -10,6 +10,16 @@ import base64
 # Load environment variables
 load_dotenv()
 
+firebase_config = {
+    "apiKey": os.getenv("google_api"),
+    "authDomain": "nova-flex-19015.firebaseapp.com",
+    "projectId": "nova-flex-19015",
+    "storageBucket": "nova-flex-19015.appspot.com",
+    "messagingSenderId": "1052840044112",
+    "appId": "1:1052840044112:web:899361e82d2181889d9355",
+    "measurementId": "G-J8Z4V1RDZ6"
+}
+
 app = Flask(__name__)
 app.secret_key = os.getenv('secret_key')
 
@@ -76,7 +86,7 @@ def virtualworkout():
 # Route for home page (signup/login view)
 @app.route('/')
 def signup():
-    return render_template('su.html')
+    return render_template('su.html', firebase_config=firebase_config)
 
 # Route for user signup
 @app.route('/signup', methods=['POST'])
