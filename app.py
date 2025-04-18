@@ -158,7 +158,8 @@ def create_order():
     secret_key = os.getenv("cf_secret_key")
     environment = os.getenv("cf_env")
 
-    url = "https://sandbox.cashfree.com/pg/orders"
+    url = "https://sandbox.cashfree.com/pg/orders" if environment == 'test' else "https://api.cashfree.com/pg/orders"
+
     headers = {
         "accept": "application/json",
         "x-api-version": "2022-09-01",
@@ -184,6 +185,7 @@ def create_order():
 
     response = requests.post(url, headers=headers, json=payload)
     response_data = response.json()
+    print("Cashfree response:", response_data) #
 
     if 'payment_link' in response_data:
         return jsonify({'payment_link': response_data['payment_link']})
