@@ -182,13 +182,8 @@ def create_order():
         }
     }
 
-    print("Making request to:", url)
-    print("Headers:", headers)
-    print("Payload:", payload)
-
     response = requests.post(url, headers=headers, json=payload)
     response_data = response.json()
-    print("Cashfree response:", response_data) #
 
     if 'payment_link' in response_data:
         return jsonify({'payment_link': response_data['payment_link']})
