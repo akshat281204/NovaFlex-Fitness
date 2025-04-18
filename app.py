@@ -115,24 +115,28 @@ def signup_post():
 # Route for user login
 @app.route('/login', methods=['POST'])
 def login():
-    username = request.form['li_Username']
-    password = request.form['li_password']
-    
-    user_ref = db.collection('users').document(username)
-    user_doc = user_ref.get()
-    
-    if user_doc.exists:
-        stored_password = user_doc.to_dict().get('password')
+    try:
+        username = request.form['li_Username']
+        password = request.form['li_password']
         
-        if check_password_hash(stored_password, password):
-            session['username'] = username
-            return redirect('/home')
+        user_ref = db.collection('users').document(username)
+        user_doc = user_ref.get()
+        
+        if user_doc.exists:
+            stored_password = user_doc.to_dict().get('password')
+            
+            if check_password_hash(stored_password, password):
+                session['username'] = username
+                return redirect('/home')
+            else:
+                error_message = "Incorrect password. Please try again."
+                return render_template('su.html', error=error_message)
         else:
-            error_message = "Incorrect password. Please try again."
+            error_message = "Invalid username. Please try again."
             return render_template('su.html', error=error_message)
-    else:
-        error_message = "Invalid username. Please try again."
-        return render_template('su.html', error=error_message)
+    except Exception as e:
+        app.logger.error(f"Login error: {str(e)}")
+        return "Internal Server Error", 500
 
 # Route for home
 @app.route('/home')
