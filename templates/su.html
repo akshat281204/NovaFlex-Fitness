@@ -6,6 +6,10 @@
     <title>NovaFlex Fitness - Sign Up or Login</title>
     <link rel="stylesheet" href="../static/css/su.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 </head>
 <body>
     <div class="auth-container">
@@ -69,6 +73,9 @@
                 <div class="form-group">
                     <label for="li_password">Password</label>
                     <input type="password" id="li_password" name="li_password" required>
+                    <div class="forgot-password">
+                        <a href="#" onclick="resetPassword()">Forgot Password?</a>
+                    </div>
                 </div>
                 
                 <button type="submit" class="submit-btn">Login</button>
@@ -81,32 +88,59 @@
         <p>&copy; 2024 NovaFlex Fitness. All Rights Reserved.</p>
     </footer>
 
+    <!-- Tab Switching -->
     <script>
-        // Tab switching
-        document.getElementById('signup-tab').addEventListener('click', function() {
+        document.getElementById('signup-tab').addEventListener('click', function () {
             this.classList.add('active');
             document.getElementById('login-tab').classList.remove('active');
             document.getElementById('signup-form').style.display = 'block';
             document.getElementById('login-form').style.display = 'none';
         });
 
-        document.getElementById('login-tab').addEventListener('click', function() {
+        document.getElementById('login-tab').addEventListener('click', function () {
             this.classList.add('active');
             document.getElementById('signup-tab').classList.remove('active');
             document.getElementById('signup-form').style.display = 'none';
             document.getElementById('login-form').style.display = 'block';
         });
 
-        // Form toggle links
-        document.getElementById('toggle-login').addEventListener('click', function(e) {
+        document.getElementById('toggle-login').addEventListener('click', function (e) {
             e.preventDefault();
             document.getElementById('login-tab').click();
         });
 
-        document.getElementById('toggle-signup').addEventListener('click', function(e) {
+        document.getElementById('toggle-signup').addEventListener('click', function (e) {
             e.preventDefault();
             document.getElementById('signup-tab').click();
         });
+    </script>
+
+    <!-- Firebase Config & Reset Password Script -->
+    <script>
+        const firebaseConfig = {
+        apiKey: "AIzaSyAt7fEREPofommr9R4C8k-CTA8bAemD3YM",
+        authDomain: "nova-flex-19015.firebaseapp.com",
+        projectId: "nova-flex-19015",
+        storageBucket: "nova-flex-19015.firebasestorage.app",
+        messagingSenderId: "1052840044112",
+        appId: "1:1052840044112:web:899361e82d2181889d9355",
+        measurementId: "G-J8Z4V1RDZ6"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+
+        function resetPassword() {
+            const email = prompt("Please enter your registered email:");
+            if (email) {
+                firebase.auth().sendPasswordResetEmail(email)
+                    .then(() => {
+                        alert("Password reset email sent! Check your inbox.");
+                    })
+                    .catch((error) => {
+                        alert("Error: " + error.message);
+                    });
+            }
+        }
     </script>
 </body>
 </html>
