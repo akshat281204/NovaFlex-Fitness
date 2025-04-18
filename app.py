@@ -184,7 +184,7 @@ def create_order():
         "return_url": f"https://nova-flex-fitness.vercel.app/payment_success?order_id={order_id}&membership_type={membership_type}&username={username}",
         "notify_url": "https://nova-flex-fitness.vercel.app/verify_payment"
     }
-}
+    }
 
     response = requests.post(url, headers=headers, json=payload)
     response_data = response.json()
@@ -199,6 +199,15 @@ def create_order():
             'cashfree_response': response_data
         }), 400
 
+@app.route('/verify_payment', methods=['POST'])
+def verify_payment():
+    try:
+        data = request.get_json()
+        print("Cashfree notify payload:", data)
+        return jsonify({'status': 'success'}), 200
+    except Exception as e:
+        print("Error in verify_payment:", str(e))
+        return jsonify({'status': 'error', 'message': str(e)}), 400
 
 @app.route('/payment_success')
 def payment_success():
