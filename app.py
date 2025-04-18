@@ -179,7 +179,7 @@ def create_order():
             "customer_phone": user_doc.get("phone")
         },
         "order_meta": {
-            "return_url": f"http://127.0.0.1:5000/payment_success?order_id={order_id}&membership_type={membership_type}"
+            "return_url": f"https://nova-flex-fitness.vercel.app/payment_success?order_id={order_id}&membership_type={membership_type}"
         }
     }
 
