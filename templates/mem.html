@@ -123,13 +123,11 @@
     </footer>
 
     <script>
-        // Mobile menu toggle
         document.querySelector('.mobile-menu-toggle').addEventListener('click', function() {
             document.querySelector('.main-nav').classList.toggle('active');
             this.classList.toggle('active');
         });
 
-        // Original membership purchase functionality
         document.addEventListener('DOMContentLoaded', function () {
             const goldBtn = document.getElementById('join_gold');
             const platinumBtn = document.getElementById('join_platinum');
@@ -141,23 +139,22 @@
                 platinumBtn.addEventListener('click', () => purchaseMembership('platinum'));
             }
 
-        function purchaseMembership(membershipType) {
-            fetch('/create_order', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ membership_type: membershipType })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.payment_link) {
-                    window.location.href = data.payment_link;
-                } else {
-                    alert("Payment initiation failed");
-                    console.error(data);
-                }
-            });
-        }
-
+            function purchaseMembership(membershipType) {
+                fetch('/create_order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ membership_type: membershipType })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.payment_link) {
+                        window.location.href = data.payment_link;
+                    } else {
+                        alert("Payment initiation failed");
+                        console.error(data);
+                    }
+                });
+            }
         });
     </script>
 </body>
