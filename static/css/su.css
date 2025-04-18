@@ -215,19 +215,4 @@ a:hover {
     .submit-btn {
         padding: 10px;
     }
-    .forgot-password {
-        text-align: right;
-        margin-top: 5px;
-    }
-    
-    .forgot-password a {
-        font-size: 0.9em;
-        color: #007bff;
-        text-decoration: none;
-    }
-    
-    .forgot-password a:hover {
-        text-decoration: underline;
-    }
-    
 }

@@ -10,18 +10,7 @@ import base64
 # Load environment variables
 load_dotenv()
 
-firebase_config = {
-    "apiKey": os.getenv("google_api"),
-    "authDomain": "nova-flex-19015.firebaseapp.com",
-    "projectId": "nova-flex-19015",
-    "storageBucket": "nova-flex-19015.appspot.com",
-    "messagingSenderId": "1052840044112",
-    "appId": "1:1052840044112:web:899361e82d2181889d9355",
-    "measurementId": "G-J8Z4V1RDZ6"
-}
-
 app = Flask(__name__)
-app.config['DEBUG'] = True
 app.secret_key = os.getenv('secret_key')
 
 firebase_credentials_b64 = os.environ.get("firebase_credentials")
@@ -87,7 +76,7 @@ def virtualworkout():
 # Route for home page (signup/login view)
 @app.route('/')
 def signup():
-    return render_template('su.html', firebase_config=firebase_config)
+    return render_template('su.html')
 
 # Route for user signup
 @app.route('/signup', methods=['POST'])
@@ -116,28 +105,18 @@ def signup_post():
 # Route for user login
 @app.route('/login', methods=['POST'])
 def login():
-    try:
-        username = request.form['li_Username']
-        password = request.form['li_password']
-        
-        user_ref = db.collection('users').document(username)
-        user_doc = user_ref.get()
-        
-        if user_doc.exists:
-            stored_password = user_doc.to_dict().get('password')
-            
-            if check_password_hash(stored_password, password):
-                session['username'] = username
-                return redirect('/home')
-            else:
-                error_message = "Incorrect password. Please try again."
-                return render_template('su.html', error=error_message)
-        else:
-            error_message = "Invalid username. Please try again."
-            return render_template('su.html', error=error_message)
-    except Exception as e:
-        app.logger.error(f"Login error: {str(e)}")
-        return "Internal Server Error", 500
+    username = request.form['li_Username']
+    password = request.form['li_password']
+
+    user_ref = db.collection('users').document(username)
+    user_doc = user_ref.get()
+
+    if user_doc.exists and check_password_hash(user_doc.to_dict().get('password'), password):
+        session['username'] = username
+        return redirect('/home')
+    else:
+        error_message = "Invalid username or password. Please try again."
+        return render_template('su.html', error=error_message)
 
 # Route for home
 @app.route('/home')
