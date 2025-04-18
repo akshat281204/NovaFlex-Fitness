@@ -183,14 +183,24 @@ def create_order():
         }
     }
 
+    print("Making request to:", url)
+    print("Headers:", headers)
+    print("Payload:", json.dumps(payload, indent=2))
+    print("Cashfree response:", json.dumps(response_data, indent=2))
+
+
     response = requests.post(url, headers=headers, json=payload)
     response_data = response.json()
     print("Cashfree response:", response_data) #
 
-    if 'payment_link' in response_data:
-        return jsonify({'payment_link': response_data['payment_link']})
+    if 'payments' in response_data and 'url' in response_data['payments']:
+        return jsonify({'payment_link': response_data['payments']['url']}), 200
     else:
-        return jsonify({'error': 'Payment link not received', 'cashfree_response': response_data}), 400
+        return jsonify({
+            'error': 'Payment link not received',
+            'cashfree_response': response_data
+        }), 400
+
 
 
 
