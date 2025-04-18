@@ -158,8 +158,7 @@ def create_order():
     secret_key = os.getenv("cf_secret_key")
     environment = os.getenv("cf_env")
 
-    url = "https://sandbox.cashfree.com/pg/orders" if environment == 'test' else "https://api.cashfree.com/pg/orders"
-
+    url = "https://sandbox.cashfree.com/pg/orders"
     headers = {
         "accept": "application/json",
         "x-api-version": "2022-09-01",
@@ -182,6 +181,10 @@ def create_order():
             "return_url": f"https://nova-flex-fitness.vercel.app/payment_success?order_id={order_id}&membership_type={membership_type}"
         }
     }
+
+    print("Making request to:", url)
+    print("Headers:", headers)
+    print("Payload:", payload)
 
     response = requests.post(url, headers=headers, json=payload)
     response_data = response.json()
