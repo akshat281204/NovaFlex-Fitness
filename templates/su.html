@@ -121,17 +121,18 @@
         firebase.initializeApp(firebaseConfig);
 
         function resetPassword() {
-            const email = prompt("Please enter your registered email:");
-            if (email) {
-                firebase.auth().sendPasswordResetEmail(email)
-                    .then(() => {
-                        alert("Password reset email sent! Check your inbox.");
-                    })
-                    .catch((error) => {
-                        alert("Error: " + error.message);
-                    });
+        const email = prompt("Please enter your registered email:");
+        if (email) {
+            firebase.auth().sendPasswordResetEmail(email)
+                .then(() => {
+                    alert("Password reset email sent! Check your inbox.");
+                })
+                .catch((error) => {
+                    alert("Error: " + error.message);
+                });
             }
         }
+
     </script>
 </body>
 </html>
