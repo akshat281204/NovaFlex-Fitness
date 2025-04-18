@@ -21,6 +21,7 @@ firebase_config = {
 }
 
 app = Flask(__name__)
+app.config['DEBUG'] = True
 app.secret_key = os.getenv('secret_key')
 
 firebase_credentials_b64 = os.environ.get("firebase_credentials")
