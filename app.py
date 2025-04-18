@@ -8,12 +8,14 @@ import json
 import base64
 import requests
 import uuid
+from flask_cors import CORS # type: ignore
 
 # Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv('secret_key')
+CORS(app)
 
 # Firebase setup
 firebase_credentials_b64 = os.environ.get("firebase_credentials")
@@ -215,4 +217,4 @@ def verify_payment():
     return jsonify({"error": "Invalid data"}), 400
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
