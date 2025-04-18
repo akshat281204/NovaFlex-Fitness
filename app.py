@@ -215,6 +215,3 @@ def verify_payment():
         return jsonify({"success": True}), 200
 
     return jsonify({"error": "Invalid data"}), 400
-
-if __name__ == '__main__':
-    app.run(debug=False)
