@@ -15,72 +15,19 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv('secret_key')
 
+# Firebase setup
 firebase_credentials_b64 = os.environ.get("firebase_credentials")
 firebase_credentials_json = base64.b64decode(firebase_credentials_b64).decode("utf-8")
 cred_dict = json.loads(firebase_credentials_json)
 cred = credentials.Certificate(cred_dict)
-
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
-# Route for membership page
-@app.route('/membership')
-def member():
-    username = session.get('username')
-    if username:
-        user_ref = db.collection('users').document(username)
-        user_doc = user_ref.get()
-        if user_doc.exists:
-            user_data = user_doc.to_dict()
-            return render_template('mem.html',
-                                   home_url=url_for('home'),
-                                   user_profile_url=url_for('signup'),
-                                   virtual_workouts_url=url_for('virtualworkout'),
-                                   gyms_near_you_url=url_for('gyms_near_you'),
-                                   gold_membership=user_data.get('gold', 'no'),
-                                   platinum_membership=user_data.get('platinum', 'no'))
-    return render_template('mem.html',
-                           home_url=url_for('home'),
-                           user_profile_url=url_for('signup'),
-                           virtual_workouts_url=url_for('virtualworkout'),
-                           gyms_near_you_url=url_for('gyms_near_you'))
-
-# Route for membership purchase
-@app.route('/purchase_membership', methods=['POST'])
-def purchase_membership():
-    membership_type = request.json.get('membership_type')
-    username = session.get('username')
-    if username:
-        user_ref = db.collection('users').document(username)
-        user_ref.update({membership_type: 'yes'})
-        return jsonify({'success': True}), 200
-    else:
-        return jsonify({'error': 'User not logged in'}), 401
-
-# Route for gyms near you
-@app.route('/gymsnearyou')
-def gyms_near_you():
-    return render_template('gny.html',
-                           home_url=url_for('home'),
-                           user_profile_url=url_for('signup'),
-                           virtual_workouts_url=url_for('virtualworkout'),
-                           gyms_near_you_url=url_for('gyms_near_you'))
-
-# Route for virtual workout
-@app.route('/virtualworkout')
-def virtualworkout():
-    return render_template('virtworkout.html',
-                           home_url=url_for('home'),
-                           user_profile_url=url_for('signup'),
-                           virtual_workouts_url=url_for('virtualworkout'),
-                           gyms_near_you_url=url_for('gyms_near_you'))
-
-# Route for home page (signup/login view)
+# Routes
 @app.route('/')
 def signup():
     return render_template('su.html')
 
-# Route for user signup
 @app.route('/signup', methods=['POST'])
 def signup_post():
     username = request.form['su_Username']
@@ -104,7 +51,6 @@ def signup_post():
 
     return redirect('/home')
 
-# Route for user login
 @app.route('/login', methods=['POST'])
 def login():
     username = request.form['li_Username']
@@ -120,7 +66,11 @@ def login():
         error_message = "Invalid username or password. Please try again."
         return render_template('su.html', error=error_message)
 
-# Route for home
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('signup'))
+
 @app.route('/home')
 def home():
     return render_template('home.html',
@@ -130,7 +80,6 @@ def home():
                            gyms_near_you_url=url_for('gyms_near_you'),
                            membership_url=url_for('member'))
 
-# Profile route
 @app.route('/profile')
 def profile():
     username = session.get('username')
@@ -143,7 +92,55 @@ def profile():
         return render_template('profile.html', user_data=user_data)
     else:
         return "User not found", 404
-    
+
+@app.route('/membership')
+def member():
+    username = session.get('username')
+    if username:
+        user_ref = db.collection('users').document(username)
+        user_doc = user_ref.get()
+        if user_doc.exists:
+            user_data = user_doc.to_dict()
+            return render_template('mem.html',
+                                   home_url=url_for('home'),
+                                   user_profile_url=url_for('signup'),
+                                   virtual_workouts_url=url_for('virtualworkout'),
+                                   gyms_near_you_url=url_for('gyms_near_you'),
+                                   gold_membership=user_data.get('gold', 'no'),
+                                   platinum_membership=user_data.get('platinum', 'no'))
+    return render_template('mem.html',
+                           home_url=url_for('home'),
+                           user_profile_url=url_for('signup'),
+                           virtual_workouts_url=url_for('virtualworkout'),
+                           gyms_near_you_url=url_for('gyms_near_you'))
+
+@app.route('/gymsnearyou')
+def gyms_near_you():
+    return render_template('gny.html',
+                           home_url=url_for('home'),
+                           user_profile_url=url_for('signup'),
+                           virtual_workouts_url=url_for('virtualworkout'),
+                           gyms_near_you_url=url_for('gyms_near_you'))
+
+@app.route('/virtualworkout')
+def virtualworkout():
+    return render_template('virtworkout.html',
+                           home_url=url_for('home'),
+                           user_profile_url=url_for('signup'),
+                           virtual_workouts_url=url_for('virtualworkout'),
+                           gyms_near_you_url=url_for('gyms_near_you'))
+
+@app.route('/purchase_membership', methods=['POST'])
+def purchase_membership():
+    membership_type = request.json.get('membership_type')
+    username = session.get('username')
+    if username:
+        user_ref = db.collection('users').document(username)
+        user_ref.update({membership_type: 'yes'})
+        return jsonify({'success': True}), 200
+    else:
+        return jsonify({'error': 'User not logged in'}), 401
+
 @app.route('/create_order', methods=['POST'])
 def create_order():
     data = request.json
@@ -169,9 +166,11 @@ def create_order():
     }
 
     user_doc = db.collection('users').document(username).get().to_dict()
+    amount = 299 if membership_type == "gold" else 599
+
     payload = {
         "order_id": order_id,
-        "order_amount": 299 if membership_type == "gold" else 599,
+        "order_amount": amount,
         "order_currency": "INR",
         "customer_details": {
             "customer_id": username,
@@ -179,42 +178,41 @@ def create_order():
             "customer_phone": user_doc.get("phone")
         },
         "order_meta": {
-            "return_url": f"https://nova-flex-fitness.vercel.app/payment_success?order_id={order_id}&membership_type={membership_type}"
+            "return_url": f"https://nova-flex-fitness.vercel.app/payment_success?order_id={order_id}&membership_type={membership_type}&username={username}",
+            "notify_url": "https://nova-flex-fitness.vercel.app/verify_payment"
         }
     }
 
-    print("Making request to:", url)
-    print("Headers:", headers)
-    print("Payload:", json.dumps(payload, indent=2))
-
     response = requests.post(url, headers=headers, json=payload)
     response_data = response.json()
-
     print("Cashfree response:", json.dumps(response_data, indent=2))
 
     if 'payments' in response_data and 'url' in response_data['payments']:
         return jsonify({'payment_link': response_data['payments']['url']}), 200
     else:
-        return jsonify({
-            'error': 'Payment link not received',
-            'cashfree_response': response_data
-        }), 400
-
+        return jsonify({'error': 'Payment link not received', 'cashfree_response': response_data}), 400
 
 @app.route('/payment_success')
 def payment_success():
-    username = session.get('username')
+    username = request.args.get('username')
     membership_type = request.args.get('membership_type')
 
     if username and membership_type in ['gold', 'platinum']:
-        user_ref = db.collection('users').document(username)
-        user_ref.update({membership_type: 'yes'})
+        db.collection('users').document(username).update({membership_type: 'yes'})
         return redirect('/home')
     return "Payment failed or user not logged in", 400
 
+@app.route('/verify_payment', methods=['POST'])
+def verify_payment():
+    data = request.json
+    order_info = data.get('order', {})
+    order_status = order_info.get('order_status')
+    username = order_info.get('customer_details', {}).get('customer_id')
+    if order_status == "PAID" and username:
+        db.collection('users').document(username).update({'platinum': 'yes'})
+        return jsonify({"success": True}), 200
 
-# Logout route
-@app.route('/logout')
-def logout():
-    session.pop('username', None)
-    return redirect(url_for('signup'))
+    return jsonify({"error": "Invalid data"}), 400
+
+if __name__ == '__main__':
+    app.run(debug=True)
