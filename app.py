@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 import os
 import json
 import base64
+import requests
+import uuid
 
 # Load environment variables
 load_dotenv()
@@ -141,6 +143,59 @@ def profile():
         return render_template('profile.html', user_data=user_data)
     else:
         return "User not found", 404
+    
+@app.route('/create_order', methods=['POST'])
+def create_order():
+    data = request.json
+    membership_type = data.get('membership_type')
+    username = session.get('username')
+
+    if not username:
+        return jsonify({'error': 'Not logged in'}), 401
+
+    order_id = str(uuid.uuid4())
+    app_id = os.getenv("cf_id")
+    secret_key = os.getenv("cf_secret_key")
+    environment = os.getenv("cf_env")
+
+    url = f"https://sandbox.cashfree.com/pg/orders" if environment == 'test' else f"https://api.cashfree.com/pg/orders"
+
+    headers = {
+        "accept": "application/json",
+        "x-api-version": "2022-09-01",
+        "content-type": "application/json",
+        "x-client-id": app_id,
+        "x-client-secret": secret_key
+    }
+
+    payload = {
+        "order_id": order_id,
+        "order_amount": 299 if membership_type == "gold" else 599,
+        "order_currency": "INR",
+        "customer_details": {
+            "customer_id": username,
+            "customer_email": db.collection('users').document(username).get().to_dict().get("email"),
+            "customer_phone": db.collection('users').document(username).get().to_dict().get("phone")
+        },
+        "order_meta": {
+            "return_url": f"http://127.0.0.1:5000/payment_success?order_id={order_id}&membership_type={membership_type}"
+        }
+    }
+
+    response = requests.post(url, headers=headers, json=payload)
+    return jsonify(response.json())
+
+@app.route('/payment_success')
+def payment_success():
+    username = session.get('username')
+    membership_type = request.args.get('membership_type')
+
+    if username and membership_type in ['gold', 'platinum']:
+        user_ref = db.collection('users').document(username)
+        user_ref.update({membership_type: 'yes'})
+        return redirect('/home')
+    return "Payment failed or user not logged in", 400
+
 
 # Logout route
 @app.route('/logout')

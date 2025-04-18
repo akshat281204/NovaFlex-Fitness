@@ -141,22 +141,23 @@
                 platinumBtn.addEventListener('click', () => purchaseMembership('platinum'));
             }
 
-            function purchaseMembership(membershipType) {
-                fetch('/purchase_membership', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ membership_type: membershipType })
-                })
-                .then(response => {
-                    if (response.ok) {
-                        window.location.href = '/home';
-                    } else {
-                        console.error('Failed to purchase membership');
-                    }
-                });
-            }
+        function purchaseMembership(membershipType) {
+            fetch('/create_order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ membership_type: membershipType })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.payment_link) {
+                    window.location.href = data.payment_link;
+                } else {
+                    alert("Payment initiation failed");
+                    console.error(data);
+                }
+            });
+        }
+
         });
     </script>
 </body>
